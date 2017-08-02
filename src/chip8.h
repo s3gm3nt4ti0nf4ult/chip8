@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stdint.h>
 #include <vector>
+#include <climits>
 #include "cleanup.h"
 
 using std::vector;
@@ -35,7 +36,7 @@ private:
     
 
     // opcodes
-    /*
+    uint16_t getopcode(uint16_t, uint8_t, uint8_t);
     void op0NNN();
     void op00E0();
     void op00EE();
@@ -71,5 +72,14 @@ private:
     void opFX33();
     void opFX55();
     void opFX65();
-    */
 };
+
+template <typename R>
+static constexpr R bitmask(unsigned int const onecount)
+{
+//  return (onecount != 0)
+//      ? (static_cast<R>(-1) >> ((sizeof(R) * CHAR_BIT) - onecount))
+//      : 0;
+    return static_cast<R>(-(onecount != 0))
+        & (static_cast<R>(-1) >> ((sizeof(R) * CHAR_BIT) - onecount));
+} // link: https://stackoverflow.com/a/28703383/6849518
