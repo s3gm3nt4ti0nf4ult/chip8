@@ -40,8 +40,9 @@ private:
     void op0NNN();
     void op00E0();
     void op00EE();
-    void op1NNN();
-    void op2NNN();
+    void op1NNN(uint16_t);
+    void op2NNN(uint16_t);
+    /*
     void op3XNN();
     void op4XNN();
     void op5XY0();
@@ -72,6 +73,7 @@ private:
     void opFX33();
     void opFX55();
     void opFX65();
+    */
 };
 
 template <typename R>

@@ -28,7 +28,7 @@ bool vm::run(string& fname){
     load(fname);
 
     while (true){
-        vm::run_cycle();
+        //vm::run_cycle(); TODO: cycle, refresh, counterUpdate, events
     }
     return true;
 }
@@ -41,7 +41,7 @@ bool vm::load(string& fname){
 
 uint16_t vm::getopcode(uint16_t instr, uint8_t pos, uint8_t len){
     uint16_t mask = 0;
-    mask = BIT_MASK(uint16_t, len);
+    mask = bitmask<uint16_t>(len);
     mask = mask >> pos;
     return (instr & mask) << pos;
 }
@@ -68,9 +68,9 @@ void vm::op00EE(){ // ret instr
     }
 }
 
-void vm::1NNN(uint16_t params){ // jump instr
+void vm::op1NNN(uint16_t params){ // jump instr
     uint16_t addr = getopcode(params, 4, 12);
-    if (addr > 0 && addr < 4096){ 
+    if (addr < 4096){ 
         this->PC = params;
     }
     else{
@@ -78,9 +78,9 @@ void vm::1NNN(uint16_t params){ // jump instr
     }
 }
 
-void vm::2NNN(uint16_t params){ // call instr
+void vm::op2NNN(uint16_t params){ // call instr
     uint16_t addr = getopcode(params, 4, 12);
-    if (this->stack.size() < 64 && addr >= 0 && addr < 4096){
+    if (this->stack.size() < 64 &&  addr < 4096){
         this-> PC = addr;
     }
     else{
