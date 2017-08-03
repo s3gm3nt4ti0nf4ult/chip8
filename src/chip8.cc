@@ -274,4 +274,108 @@ void vm::opEXA1(uint16_t params){
 }
 
 
+void vm::opFX07(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    V[x] = delay_timer;
+}
+
+void vm::opFX0A(uint16_t params){ // TODO wait on event
+    uint16_t x = getopcode(params, 8, 4);
+    int8_t tmp = V[x];
+    while(true){
+        if (vm::ispressed()){
+            V[x] = vm::what_pressed();
+            break;
+        }
+    }
+}
+
+
+void vm::opFX15(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16) 
+        delay_timer = V[x];
+    else{
+        throw 10;
+    }
+}
+
+void vm::opFX18(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16){
+        sound_timer = V[x];
+    }
+    else{
+        throw 10;
+    }
+}
+
+
+void vm::opFX1E(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16){
+        I += V[x];
+    }
+    else{
+        throw 10;
+    }
+}
+
+void vm::opFX29(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16){
+        // TODO
+    }
+    else{
+        throw 10;
+    }
+}
+
+
+void vm::opFX33(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16 && I-3 < 4096){
+        memory[I] = V[x] / 100;
+        memory[I+1] = (V[x] % 100) / 10;
+        memory[I+2] = ((V[x] % 100) % 10);
+     }
+    else{
+        throw 10;
+    }
+}
+
+void vm::FX55(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16){
+        if ( I + x < 4096){
+            for(auto i = 0; i < x; i++){
+                memory[I+i] = V[i];
+            }
+        }
+        else{
+            throw 10;
+        }
+    }
+    else{
+        throw 10;
+    }
+}
+
+void vm::FX55(uint16_t params){
+    uint16_t x = getopcode(params, 8, 4);
+    if (x < 16){
+        if ( I + x < 4096){
+            for(auto i = 0; i < x; i++){
+                V[i] = memory[I+i] ;
+            }
+        }
+        else{
+            throw 10;
+        }
+    }
+    else{
+        throw 10;
+    }
+}
+
 
