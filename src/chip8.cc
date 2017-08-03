@@ -47,6 +47,25 @@ uint16_t vm::getopcode(uint16_t instr, uint8_t pos, uint8_t len){
 }
 
 
+//TODO those functions on events?
+bool vm::is_pressed(){
+    //TODO implement this with SDL
+    return true;
+}
+
+
+bool vm::check_pressed(int8_t &value){
+    value = 2;
+    if (value)
+        return true;
+    return false;
+}
+
+uint8_t vm::what_pressed(){
+    //TODO implement this with SDL
+    return 0xFF;
+}
+
 void vm::op0NNN(){ // unsupportted instruction
     //this func should be empty.... or rise exception
     throw 10; // TODO add exceptions
@@ -117,7 +136,7 @@ void vm::op5XY0(uint16_t params){
 void vm::op6XKK(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
-    if(this->V[x] == this->V[y]){
+    if(this->V[x] == kk){
         this->PC += 1;
     }
 }
@@ -128,7 +147,7 @@ void vm::op7XKK(uint16_t params){
     this->V[x] = this->V[x] + uint8_t(kk);
 }
 
-void vm::op8xy0(uint16_t params){
+void vm::op8XY0(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     this->V[x] = this->V[y];
@@ -156,13 +175,13 @@ void vm::op8XY4(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     int16_t tmp = int16_t(V[x]) + int16_t(V[y]);
-    if (((bitmask<int16_t>(8) << 8) & tmp) == 0){
+    if (((bitmask<uint16_t>(8) << 8) & tmp) == 0){
         this->V[x] = this->V[x] + this->V[y];
-        V[15] = V[15] & (bitmask<int8_t>(7) << 1);
+        V[15] = V[15] & (bitmask<uint8_t>(7) << 1);
     }
     else{
         this->V[x] = this->V[x] + this->V[y];
-        V[15] = V[15] ^ (bitmask<int8_t>(8));
+        V[15] = V[15] ^ (bitmask<uint8_t>(8));
     }
 }
 
@@ -170,26 +189,26 @@ void vm::op8XY5(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     int16_t tmp = int16_t(V[x]) - int16_t(V[y]);
-    if (((bitmask<int16_t>(8) << 8) & tmp) == 0){
+    if (((bitmask<uint16_t>(8) << 8) & tmp) == 0){
         this->V[x] = this->V[x] - this->V[y];
-        V[15] = V[15] & (bitmask<int8_t>(7) << 1);
+        V[15] = V[15] & (bitmask<uint8_t>(7) << 1);
     }
     else{
         this->V[x] = this->V[x] - this->V[y];
-        V[15] = V[15] ^ (bitmask<int8_t>(1));
+        V[15] = V[15] ^ (bitmask<uint8_t>(1));
     }
 }
 
 void vm::op8XY6(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
-    if (((bitmask<int8_t>(1) ) & V[x]) != 0){
+    if (((bitmask<uint8_t>(1) ) & V[x]) != 0){
         this->V[x] = this->V[x] >> this->V[y];
-        V[15] = V[15] & (bitmask<int8_t>(7) << 1);
+        V[15] = V[15] & (bitmask<uint8_t>(7) << 1);
     }
     else{
         this->V[x] = this->V[x] >> this->V[y];
-        V[15] = V[15] ^ (bitmask<int8_t>(8));
+        V[15] = V[15] ^ (bitmask<uint8_t>(8));
     }
 }
 
@@ -199,24 +218,24 @@ void vm::op8XY7(uint16_t params){
     uint16_t y = getopcode(params, 0, 4);
     if (V[x] <= V[y]){
         this->V[x] = this->V[x] - this->V[y];
-        V[15] = V[15] & (bitmask<int8_t>(7) << 1);
+        V[15] = V[15] & (bitmask<uint8_t>(7) << 1);
     }
     else{
         this->V[x] = this->V[x] - this->V[y];
-        V[15] = V[15] ^ (bitmask<int8_t>(8));
+        V[15] = V[15] ^ (bitmask<uint8_t>(8));
     }
 }
 
 void vm::op8XYE(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
-    if (((bitmask<int8_t>(1) << 8 ) & V[x]) != 0){
+    if (((bitmask<uint8_t>(1) << 8 ) & V[x]) != 0){
         this->V[x] = this->V[x] << this->V[y];
-        v[15] = v[15] & (bitmask<int8_t>(7) << 1);
+        V[15] = V[15] & (bitmask<uint8_t>(7) << 1);
     }
     else{
         this->V[x] = this->V[x] << this->V[y];
-        v[15] = v[15] ^ (bitmask<int8_t>(8));
+        V[15] = V[15] ^ (bitmask<uint8_t>(8));
     }
 }
 
@@ -235,13 +254,15 @@ void vm::opANNN(uint16_t params){
 
 void vm::opBNNN(uint16_t params){
     uint16_t offset = getopcode(params, 0, 12);
-    this-> PC += V[0];
+    if (offset + V[0] < MEMORY_SIZE){
+        this-> PC += V[0];
+    }
 }
 
 void vm::opCXKK(uint16_t params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
-    V[x] = random()%255 & kk;   
+    V[x] = rand()%255 & kk;   
 }
 
 void vm::opDXYN(uint16_t params){
@@ -249,9 +270,10 @@ void vm::opDXYN(uint16_t params){
     uint16_t y = getopcode(params, 4, 4);
     uint16_t n = getopcode(params, 0, 4);
     vector<int8_t> bytes;
-    if (this-> I + i < 4096){
+    if (this-> I + n < 4096){
         for(int i = this->I; i < n; i++)
             bytes.push_back(memory[i]);
+        printf("%d %d", x, y); //TODO implement with display
     }
     else{
         throw 10;
@@ -261,14 +283,14 @@ void vm::opDXYN(uint16_t params){
 
 void vm::opEX9E(uint16_t params){
     uint16_t x = getopcode(params, 8, 4);
-    if(vm::check_pressed(V[x])){
+    if(check_pressed(V[x])){
         PC++;
     }
 }
 
 void vm::opEXA1(uint16_t params){
     uint16_t x = getopcode(params, 8, 4);
-    if(!vm::check_pressed(V[x])){
+    if(!check_pressed(V[x])){
         PC++;
     }
 }
@@ -281,9 +303,8 @@ void vm::opFX07(uint16_t params){
 
 void vm::opFX0A(uint16_t params){ // TODO wait on event
     uint16_t x = getopcode(params, 8, 4);
-    int8_t tmp = V[x];
     while(true){
-        if (vm::ispressed()){
+        if (vm::is_pressed()){
             V[x] = vm::what_pressed();
             break;
         }
@@ -344,7 +365,7 @@ void vm::opFX33(uint16_t params){
     }
 }
 
-void vm::FX55(uint16_t params){
+void vm::opFX55(uint16_t params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         if ( I + x < 4096){
@@ -361,7 +382,7 @@ void vm::FX55(uint16_t params){
     }
 }
 
-void vm::FX55(uint16_t params){
+void vm::opFX65(uint16_t params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         if ( I + x < 4096){

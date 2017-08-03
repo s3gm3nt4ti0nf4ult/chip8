@@ -7,7 +7,12 @@
 #include <vector>
 #include <climits>
 #include <random>
+#include <cstdlib>
+#include <ctime>
 #include "cleanup.h"
+
+
+#define MEMORY_SIZE 4096
 
 using std::vector;
 using std::string;
@@ -20,7 +25,7 @@ const int SCREEN_HEIGHT = 480;
 class vm{
 public:
     bool debuged = false;
-    uint8_t memory[4096]; //4kB of RAM, first 512 used to store some stuff by vm
+    uint8_t memory[MEMORY_SIZE]; //4kB of RAM, first 512 used to store some stuff by vm
     uint16_t I;
     uint16_t PC;
     uint64_t screen[32]; //32x64 screen
@@ -34,7 +39,10 @@ public:
 
 private:
     bool load(string&);
-    
+    bool is_pressed();
+    bool check_pressed(int8_t&);
+    uint8_t what_pressed();
+
 
     uint16_t getopcode(uint16_t, uint8_t, uint8_t);
 
@@ -45,10 +53,10 @@ private:
     void op1NNN(uint16_t);
     void op2NNN(uint16_t);
     void op3XKK(uint16_t);
-    void op4XNN(uint16_t);
+    void op4XKK(uint16_t);
     void op5XY0(uint16_t);
-    void op6XNN(uint16_t);
-    void op7XNN(uint16_t);
+    void op6XKK(uint16_t);
+    void op7XKK(uint16_t);
     void op8XY0(uint16_t);
     void op8XY1(uint16_t);
     void op8XY2(uint16_t);
@@ -61,7 +69,7 @@ private:
     void op9XY0(uint16_t);
     void opANNN(uint16_t);
     void opBNNN(uint16_t);
-    void opCXNN(uint16_t);
+    void opCXKK(uint16_t);
     void opDXYN(uint16_t);
     void opEX9E(uint16_t);
     void opEXA1(uint16_t);

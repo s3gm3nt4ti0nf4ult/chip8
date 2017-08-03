@@ -4,7 +4,6 @@ using std::string;
 using std::printf;
 using std::ifstream;
 
-srand(time(NULL));
 void usage(const string&);
 inline bool fexists(const string& fname){
     ifstream f(fname.c_str());
@@ -12,6 +11,7 @@ inline bool fexists(const string& fname){
 }
 
 int main( int argc, char *argv[] ){
+    srand(time(NULL));
     string rom_fn="";
     bool debug = true;
     
