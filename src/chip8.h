@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <vector>
 #include <climits>
+#include <random>
 #include "cleanup.h"
 
 using std::vector;
@@ -35,45 +36,45 @@ private:
     bool load(string&);
     
 
-    // opcodes
     uint16_t getopcode(uint16_t, uint8_t, uint8_t);
+
+    //opcodes
     void op0NNN();
     void op00E0();
     void op00EE();
     void op1NNN(uint16_t);
     void op2NNN(uint16_t);
-    /*
-    void op3XNN();
-    void op4XNN();
-    void op5XY0();
-    void op6XNN();
-    void op7XNN();
-    void op8XY0();
-    void op8XY1();
-    void op8XY2();
-    void op8XY3();
-    void op8XY4();
-    void op8XY5();
-    void op8XY6();
-    void op8XY7();
-    void op8XYE();
-    void op9XY0();
-    void opANNN();
-    void opBNNN();
-    void opCXNN();
-    void opDXYN();
-    void opEX9E();
-    void opEXA1();
-    void opFX07();
-    void opFX0A();
-    void opFX15();
-    void opFX18();
-    void opFX1E();
-    void opFX29();
-    void opFX33();
-    void opFX55();
-    void opFX65();
-    */
+    void op3XKK(uint16_t);
+    void op4XNN(uint16_t);
+    void op5XY0(uint16_t);
+    void op6XNN(uint16_t);
+    void op7XNN(uint16_t);
+    void op8XY0(uint16_t);
+    void op8XY1(uint16_t);
+    void op8XY2(uint16_t);
+    void op8XY3(uint16_t);
+    void op8XY4(uint16_t);
+    void op8XY5(uint16_t);
+    void op8XY6(uint16_t);
+    void op8XY7(uint16_t);
+    void op8XYE(uint16_t);
+    void op9XY0(uint16_t);
+    void opANNN(uint16_t);
+    void opBNNN(uint16_t);
+    void opCXNN(uint16_t);
+    void opDXYN(uint16_t);
+    void opEX9E(uint16_t);
+    void opEXA1(uint16_t);
+    void opFX07(uint16_t);
+    void opFX0A(uint16_t);
+    void opFX15(uint16_t);
+    void opFX18(uint16_t);
+    void opFX1E(uint16_t);
+    void opFX29(uint16_t);
+    void opFX33(uint16_t);
+    void opFX55(uint16_t);
+    void opFX65(uint16_t);
+    
 };
 
 template <typename R>
@@ -85,3 +86,5 @@ static constexpr R bitmask(unsigned int const onecount)
     return static_cast<R>(-(onecount != 0))
         & (static_cast<R>(-1) >> ((sizeof(R) * CHAR_BIT) - onecount));
 } // link: https://stackoverflow.com/a/28703383/6849518
+//  151413121110 9 8 7 6 5 4 3 2 1 0
+//  | | | | | | | | | | | | | | | | |
