@@ -34,54 +34,52 @@ public:
     std::vector<int16_t> stack;
     void initialize(bool);
     bool run(string&);   
-    bool run_cycle();
     
 
 private:
     bool load(string&);
+    bool run_cycle();
     bool is_pressed();
     bool check_pressed(int8_t&);
     uint8_t what_pressed();
-
-
     uint16_t getopcode(uint16_t, uint8_t, uint8_t);
 
     //opcodes
     void op0NNN();
     void op00E0();
     void op00EE();
-    void op1NNN(uint16_t);
-    void op2NNN(uint16_t);
-    void op3XKK(uint16_t);
-    void op4XKK(uint16_t);
-    void op5XY0(uint16_t);
-    void op6XKK(uint16_t);
-    void op7XKK(uint16_t);
-    void op8XY0(uint16_t);
-    void op8XY1(uint16_t);
-    void op8XY2(uint16_t);
-    void op8XY3(uint16_t);
-    void op8XY4(uint16_t);
-    void op8XY5(uint16_t);
-    void op8XY6(uint16_t);
-    void op8XY7(uint16_t);
-    void op8XYE(uint16_t);
-    void op9XY0(uint16_t);
-    void opANNN(uint16_t);
-    void opBNNN(uint16_t);
-    void opCXKK(uint16_t);
-    void opDXYN(uint16_t);
-    void opEX9E(uint16_t);
-    void opEXA1(uint16_t);
-    void opFX07(uint16_t);
-    void opFX0A(uint16_t);
-    void opFX15(uint16_t);
-    void opFX18(uint16_t);
-    void opFX1E(uint16_t);
-    void opFX29(uint16_t);
-    void opFX33(uint16_t);
-    void opFX55(uint16_t);
-    void opFX65(uint16_t);
+    void op1NNN(const uint16_t&);
+    void op2NNN(const uint16_t&);
+    void op3XKK(const uint16_t&);
+    void op4XKK(const uint16_t&);
+    void op5XY0(const uint16_t&);
+    void op6XKK(const uint16_t&);
+    void op7XKK(const uint16_t&);
+    void op8XY0(const uint16_t&);
+    void op8XY1(const uint16_t&);
+    void op8XY2(const uint16_t&);
+    void op8XY3(const uint16_t&);
+    void op8XY4(const uint16_t&);
+    void op8XY5(const uint16_t&);
+    void op8XY6(const uint16_t&);
+    void op8XY7(const uint16_t&);
+    void op8XYE(const uint16_t&);
+    void op9XY0(const uint16_t&);
+    void opANNN(const uint16_t&);
+    void opBNNN(const uint16_t&);
+    void opCXKK(const uint16_t&);
+    void opDXYN(const uint16_t&);
+    void opEX9E(const uint16_t&);
+    void opEXA1(const uint16_t&);
+    void opFX07(const uint16_t&);
+    void opFX0A(const uint16_t&);
+    void opFX15(const uint16_t&);
+    void opFX18(const uint16_t&);
+    void opFX1E(const uint16_t&);
+    void opFX29(const uint16_t&);
+    void opFX33(const uint16_t&);
+    void opFX55(const uint16_t&);
+    void opFX65(const uint16_t&);
     
 };
 

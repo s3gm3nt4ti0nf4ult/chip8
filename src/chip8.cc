@@ -22,20 +22,54 @@ void vm::initialize(bool if_dbg){
         this->stack.empty();
 }
 
+
+bool vm::run_cycle(){
+    return true;
+}
+
 bool vm::run(string& fname){
+    bool quit = false;
+    SDL_Event e;
+       
     if (this->debuged)
         printf("Running debugged mode.\n");
-    load(fname);
+    
+    if (!this->load(fname))
+        return false;
 
-    while (true){
-        //vm::run_cycle(); TODO: cycle, refresh, counterUpdate, events
+    while (!quit){
+        while( SDL_PollEvent(&e) != 0){
+            if (e.type == SDL_QUIT){
+                quit = true;
+            }
+        }
+
+        if (!run_cycle()){
+            quit = false;
+        }
     }
     return true;
 }
 
 bool vm::load(string& fname){
+    std::streampos fsize = 0;
     if (this->debuged)
         printf("Loading binary %s...", fname.c_str());
+    
+    std::ifstream input_binary(fname.c_str(), std::ios::in | std::ios::binary);
+
+    if (!input_binary.is_open())
+        return false;
+    fsize = input_binary.tellg();
+    input_binary.seekg(0, std::ios::end);
+    fsize = input_binary.tellg() - fsize;
+    
+    input_binary.seekg(0, std::ios::beg);
+
+    if (fsize >= MEMORY_SIZE - 512)
+        return false;
+    input_binary.read(reinterpret_cast<char*>(this->memory), fsize);
+
     return true;
 }
 
@@ -88,7 +122,7 @@ void vm::op00EE(){ // ret instr
     }
 }
 
-void vm::op1NNN(uint16_t params){ // jump instr
+void vm::op1NNN(const uint16_t& params){ // jump instr
     uint16_t addr = getopcode(params, 0, 12);
     if (addr < 4096){ 
         this->PC = params;
@@ -98,7 +132,7 @@ void vm::op1NNN(uint16_t params){ // jump instr
     }
 }
 
-void vm::op2NNN(uint16_t params){ // call instr
+void vm::op2NNN(const uint16_t& params){ // call instr
     uint16_t addr = getopcode(params, 0, 12);
     if (this->stack.size() < 64 &&  addr < 4096){
         this-> PC = addr;
@@ -108,7 +142,7 @@ void vm::op2NNN(uint16_t params){ // call instr
     }
 }
 
-void vm::op3XKK(uint16_t params){
+void vm::op3XKK(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
     if(this->V[x] == kk){
@@ -117,7 +151,7 @@ void vm::op3XKK(uint16_t params){
 }
 
 
-void vm::op4XKK(uint16_t params){
+void vm::op4XKK(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
     if(this->V[x] != kk){
@@ -126,7 +160,7 @@ void vm::op4XKK(uint16_t params){
 }
 
 
-void vm::op5XY0(uint16_t params){
+void vm::op5XY0(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     if(this->V[x] == this->V[y]){
@@ -134,7 +168,7 @@ void vm::op5XY0(uint16_t params){
     }
 }
 
-void vm::op6XKK(uint16_t params){
+void vm::op6XKK(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
     if(this->V[x] == kk){
@@ -142,37 +176,37 @@ void vm::op6XKK(uint16_t params){
     }
 }
 
-void vm::op7XKK(uint16_t params){
+void vm::op7XKK(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
     this->V[x] = this->V[x] + uint8_t(kk);
 }
 
-void vm::op8XY0(uint16_t params){
+void vm::op8XY0(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     this->V[x] = this->V[y];
 }
 
-void vm::op8XY1(uint16_t params){
+void vm::op8XY1(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     this->V[x] = this->V[x] | this->V[y];
 }
 
-void vm::op8XY2(uint16_t params){
+void vm::op8XY2(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     this->V[x] = this->V[x] & this->V[y];
 }
 
-void vm::op8XY3(uint16_t params){
+void vm::op8XY3(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     this->V[x] = this->V[x] ^ this->V[y];
 }
  // TODO check VF register!!!
-void vm::op8XY4(uint16_t params){
+void vm::op8XY4(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     int16_t tmp = int16_t(V[x]) + int16_t(V[y]);
@@ -186,7 +220,7 @@ void vm::op8XY4(uint16_t params){
     }
 }
 
-void vm::op8XY5(uint16_t params){
+void vm::op8XY5(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     int16_t tmp = int16_t(V[x]) - int16_t(V[y]);
@@ -200,7 +234,7 @@ void vm::op8XY5(uint16_t params){
     }
 }
 
-void vm::op8XY6(uint16_t params){
+void vm::op8XY6(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     if (((bitmask<uint8_t>(1) ) & V[x]) != 0){
@@ -214,7 +248,7 @@ void vm::op8XY6(uint16_t params){
 }
 
 
-void vm::op8XY7(uint16_t params){
+void vm::op8XY7(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     if (V[x] <= V[y]){
@@ -227,7 +261,7 @@ void vm::op8XY7(uint16_t params){
     }
 }
 
-void vm::op8XYE(uint16_t params){
+void vm::op8XYE(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     if (((bitmask<uint8_t>(1) << 8 ) & V[x]) != 0){
@@ -240,7 +274,7 @@ void vm::op8XYE(uint16_t params){
     }
 }
 
-void vm::op9XY0(uint16_t params){
+void vm::op9XY0(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t y = getopcode(params, 0, 4);
     if (V[x] != V[y]){
@@ -248,25 +282,25 @@ void vm::op9XY0(uint16_t params){
     }
 }
 
-void vm::opANNN(uint16_t params){
+void vm::opANNN(const uint16_t& params){
     uint16_t value = getopcode(params, 0, 12);
     this->I = value;
 }
 
-void vm::opBNNN(uint16_t params){
+void vm::opBNNN(const uint16_t& params){
     uint16_t offset = getopcode(params, 0, 12);
     if (offset + V[0] < MEMORY_SIZE){
         this-> PC += V[0];
     }
 }
 
-void vm::opCXKK(uint16_t params){
+void vm::opCXKK(const uint16_t& params){
     uint16_t x = getopcode(params, 8 ,4);
     uint16_t kk = getopcode(params, 0, 8);
     V[x] = rand()%255 & kk;   
 }
 
-void vm::opDXYN(uint16_t params){
+void vm::opDXYN(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     uint16_t y = getopcode(params, 4, 4);
     uint16_t n = getopcode(params, 0, 4);
@@ -282,14 +316,14 @@ void vm::opDXYN(uint16_t params){
 }
 
 
-void vm::opEX9E(uint16_t params){
+void vm::opEX9E(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if(check_pressed(V[x])){
         PC++;
     }
 }
 
-void vm::opEXA1(uint16_t params){
+void vm::opEXA1(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if(!check_pressed(V[x])){
         PC++;
@@ -297,12 +331,12 @@ void vm::opEXA1(uint16_t params){
 }
 
 
-void vm::opFX07(uint16_t params){
+void vm::opFX07(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     V[x] = delay_timer;
 }
 
-void vm::opFX0A(uint16_t params){ // TODO wait on event
+void vm::opFX0A(const uint16_t& params){ // TODO wait on event
     uint16_t x = getopcode(params, 8, 4);
     while(true){
         if (vm::is_pressed()){
@@ -313,7 +347,7 @@ void vm::opFX0A(uint16_t params){ // TODO wait on event
 }
 
 
-void vm::opFX15(uint16_t params){
+void vm::opFX15(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16) 
         delay_timer = V[x];
@@ -322,7 +356,7 @@ void vm::opFX15(uint16_t params){
     }
 }
 
-void vm::opFX18(uint16_t params){
+void vm::opFX18(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         sound_timer = V[x];
@@ -333,7 +367,7 @@ void vm::opFX18(uint16_t params){
 }
 
 
-void vm::opFX1E(uint16_t params){
+void vm::opFX1E(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         I += V[x];
@@ -343,7 +377,7 @@ void vm::opFX1E(uint16_t params){
     }
 }
 
-void vm::opFX29(uint16_t params){
+void vm::opFX29(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         // TODO
@@ -354,7 +388,7 @@ void vm::opFX29(uint16_t params){
 }
 
 
-void vm::opFX33(uint16_t params){
+void vm::opFX33(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16 && I-3 < 4096){
         memory[I] = V[x] / 100;
@@ -366,7 +400,7 @@ void vm::opFX33(uint16_t params){
     }
 }
 
-void vm::opFX55(uint16_t params){
+void vm::opFX55(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         if ( I + x < 4096){
@@ -383,7 +417,7 @@ void vm::opFX55(uint16_t params){
     }
 }
 
-void vm::opFX65(uint16_t params){
+void vm::opFX65(const uint16_t& params){
     uint16_t x = getopcode(params, 8, 4);
     if (x < 16){
         if ( I + x < 4096){
