@@ -28,9 +28,8 @@ bool vm::run_cycle(){
 }
 
 bool vm::run(string& fname){
+      
     bool quit = false;
-    SDL_Event e;
-       
     if (this->debuged)
         printf("Running debugged mode.\n");
     
@@ -81,7 +80,6 @@ uint16_t vm::getopcode(uint16_t instr, uint8_t pos, uint8_t len){
 }
 
 
-//TODO these functions on events?
 bool vm::is_pressed(){
     //TODO implement this with SDL
     return true;
@@ -101,7 +99,7 @@ uint8_t vm::what_pressed(){
 }
 
 void vm::op0NNN(){ // unsupportted instruction
-    //this func should be empty.... or rise exception
+    //this func should be empty.... or rise an exception
     throw 10; // TODO add exceptions
 }
 

@@ -34,7 +34,8 @@ public:
     std::vector<int16_t> stack;
     void initialize(bool);
     bool run(string&);   
-    
+    SDL_Event e;
+ 
 
 private:
     bool load(string&);
@@ -82,7 +83,7 @@ private:
     void opFX65(const uint16_t&);
     
 };
-
+//TODO move to another .h file
 template <typename R>
 static constexpr R bitmask(unsigned int const onecount)
 {
@@ -94,3 +95,5 @@ static constexpr R bitmask(unsigned int const onecount)
 } // link: https://stackoverflow.com/a/28703383/6849518
 //  151413121110 9 8 7 6 5 4 3 2 1 0
 //  | | | | | | | | | | | | | | | | |
+//
+void logSDLError(std::ostream, const std::string);
