@@ -4,6 +4,10 @@
 
 #include <utility>
 #include <SDL2/SDL.h>
+#include <iostream>
+#include <string>
+#include <ostream>
+
 
 /*
  * Recurse through the list of arguments to clean up, cleaning up
@@ -55,3 +59,5 @@ inline void cleanup<SDL_Surface>(SDL_Surface *surf){
 }
 
 #endif
+
+

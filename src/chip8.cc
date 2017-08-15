@@ -47,7 +47,7 @@ uint16_t vm::getopcode(uint16_t instr, uint8_t pos, uint8_t len){
 }
 
 
-//TODO those functions on events?
+//TODO these functions on events?
 bool vm::is_pressed(){
     //TODO implement this with SDL
     return true;
@@ -74,6 +74,7 @@ void vm::op0NNN(){ // unsupportted instruction
 
 void vm::op00E0(){ // cls instr
     //clear screen TODO
+    memset(screen, 0, 32*sizeof(uint64_t));
 }
 
 
@@ -399,4 +400,6 @@ void vm::opFX65(uint16_t params){
     }
 }
 
-
+void logSDLError(std::ostream &os, const std::string &msg){
+	os << msg << " error: " << SDL_GetError() << std::endl;
+}
