@@ -33,7 +33,6 @@ int main( int argc, char *argv[] ){
         cleanup(win);
         printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
         SDL_Quit();
-
         return -1;
     }
 

@@ -44,11 +44,12 @@ private:
     bool check_pressed(int8_t&);
     uint8_t what_pressed();
     uint16_t getopcode(uint16_t, uint8_t, uint8_t);
+    void  (*getinstr())(const uint16_t&);  //TODO implement returning pointer to opcode function
 
     //opcodes
-    void op0NNN();
-    void op00E0();
-    void op00EE();
+    void op0NNN(const uint16_t&);
+    void op00E0(const uint16_t&);
+    void op00EE(const uint16_t&);
     void op1NNN(const uint16_t&);
     void op2NNN(const uint16_t&);
     void op3XKK(const uint16_t&);

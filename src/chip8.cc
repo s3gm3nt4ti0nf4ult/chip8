@@ -24,6 +24,10 @@ void vm::initialize(bool if_dbg){
 
 
 bool vm::run_cycle(){
+    //TODO
+    //Get opcode from memory
+    //get pointer to instruction opcode
+    //execute function & return 1 || 0 depending on success
     return true;
 }
 
@@ -41,11 +45,11 @@ bool vm::run(string& fname){
             if (e.type == SDL_QUIT){
                 quit = true;
             }
+            if (!run_cycle()){
+                quit = false;
+            }
         }
 
-        if (!run_cycle()){
-            quit = false;
-        }
     }
     return true;
 }
@@ -79,6 +83,9 @@ uint16_t vm::getopcode(uint16_t instr, uint8_t pos, uint8_t len){
     return (instr & mask) >> pos;
 }
 
+void vm::(*getinstr())(const uint16_t& params){ //TODO
+    return func;
+}
 
 bool vm::is_pressed(){
     //TODO implement this with SDL
@@ -98,19 +105,19 @@ uint8_t vm::what_pressed(){
     return 0xFF;
 }
 
-void vm::op0NNN(){ // unsupportted instruction
+void vm::op0NNN(const uint16_t& params){ // unsupportted instruction
     //this func should be empty.... or rise an exception
     throw 10; // TODO add exceptions
 }
 
 
-void vm::op00E0(){ // cls instr
+void vm::op00E0(const uint16_t& params){ // cls instr
     //clear screen TODO
     memset(screen, 0, 32*sizeof(uint64_t));
 }
 
 
-void vm::op00EE(){ // ret instr
+void vm::op00EE(const uint16_t& params){ // ret instr
     if (stack.size() > 0){
         this->PC = this->stack.back();
         this->stack.pop_back();
