@@ -28,6 +28,7 @@ bool vm::run_cycle(){
     //Get opcode from memory
     //get pointer to instruction opcode
     //execute function & return 1 || 0 depending on success
+     
     return true;
 }
 
@@ -71,6 +72,7 @@ bool vm::load(string& fname){
 
     if (fsize >= MEMORY_SIZE - 512)
         return false;
+   
     input_binary.read(reinterpret_cast<char*>(this->memory), fsize);
 
     return true;
