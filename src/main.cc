@@ -10,6 +10,10 @@ inline bool fexists(const string& fname){
     return f.good();
 }
 
+TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 24);
+SDL_Color Blk  = {0,0,0};
+
+
 int main( int argc, char *argv[] ){
     srand(time(NULL));
     string rom_fn="";

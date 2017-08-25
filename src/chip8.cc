@@ -3,6 +3,7 @@
 
 void vm::initialize(bool if_dbg){
     this->debuged = if_dbg;
+    
     if (debuged)
         printf("Debuged mode ON");
     else
